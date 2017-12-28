@@ -7,7 +7,7 @@ import sys
 
 sys.path.append( "../tools/" )
 from parse_out_email_text import parseOutText
-
+#print sys.path
 """
     Starter code to process the emails from Sara and Chris to extract
     the features and get the documents ready for classification.
@@ -42,26 +42,34 @@ for name, from_person in [("sara", from_sara), ("chris", from_chris)]:
         ### only look at first 200 emails when developing
         ### once everything is working, remove this line to run over full dataset
         temp_counter += 1
-        if temp_counter < 200:
-            path = os.path.join('..', path[:-1])
+        if temp_counter > 0:
+            path = os.path.join('../../ud120/', path[:-1])
             print path
             email = open(path, "r")
 
-            ### use parseOutText to extract the text from the opened email
 
+            ### use parseOutText to extract the text from the opened email
+            email_content = parseOutText(email)
             ### use str.replace() to remove any instances of the words
             ### ["sara", "shackleton", "chris", "germani"]
-
+            remove_words = ["sara", "shackleton", "chris", "germani", "sshacklensf", "cgermannsf"]
+            for word in remove_words:
+                email_content = email_content.replace(word, '')
+            email_content = ' '.join(email_content.split())
             ### append the text to word_data
-
+            word_data.append(email_content)
             ### append a 0 to from_data if email is from Sara, and 1 if email is from Chris
-
+            if name == 'sara':
+                from_data.append(0)
+            else:
+                from_data.append(1)
 
             email.close()
 
 print "emails processed"
 from_sara.close()
 from_chris.close()
+
 
 pickle.dump( word_data, open("your_word_data.pkl", "w") )
 pickle.dump( from_data, open("your_email_authors.pkl", "w") )
